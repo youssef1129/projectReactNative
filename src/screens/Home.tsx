@@ -15,6 +15,7 @@ import * as io from 'socket.io-client';
 import * as Permissions from 'expo-permissions';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
+import axios from 'axios';
 
  const socket = io.connect("https://balisage.herokuapp.com/");
 
@@ -39,7 +40,7 @@ const Home: FC<props> = ({ route, navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [products, setProducts] = useState<Array<Idata>>([]);
-    const [product, setProduct] = useState<Idata>({ articleName: '', barCode: '', price: '', qte: '', time: '',isPrinted:false });
+    const [product, setProduct] = useState<Idata>({ articleName: '', barCode: '', price: '', qte: '', time: '',isChanged:false,dept:'',group:'' });
 
     const logout = () => {
         removeData('auth').then(() => {
@@ -72,7 +73,7 @@ const Home: FC<props> = ({ route, navigation }) => {
     }, [route.params])
 
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         getData('auth').then((res) => !res.token ? navigation.replace('login') : alert(`welcome ${res.username} to hyper temara balisage (store : hyper temara)`))
     }, [])
 
@@ -102,13 +103,13 @@ const Home: FC<props> = ({ route, navigation }) => {
             download()
             
             socket.emit('onSend',products);
-
+            axios.post('https://balisage.herokuapp.com/api/article',products)
             
 
             setIsLoading(true)
             setTimeout(() => {
                 setIsLoading(false)
-                setProduct({ articleName: '', barCode: '', price: '', qte: '', time: '',isPrinted:false })
+                setProduct({ articleName: '', barCode: '', price: '', qte: '', time: '',isChanged:false })
                 setProducts([])
             }, 2000);
         }
@@ -139,11 +140,15 @@ const Home: FC<props> = ({ route, navigation }) => {
     }
 
     const isChanged = () => {
-        products.push({ ...product, time: new Date().toLocaleDateString() })
-        setProduct({ articleName: '', barCode: '', price: '', qte: '', time: '' })
+        products.push({ ...product, time: new Date().toISOString(),dept:valueDept,group:valueGroup,isChanged:true})
+        setProduct({ articleName: '', barCode: '', price: '', qte: '', time: '',isChanged:false})
+        console.log(products);
     }
     const notChanged = () => {
-        setProduct({ articleName: '', barCode: '', price: '', qte: '', time: '',isPrinted:false })
+        products.push({ ...product,qte:0, time: new Date().toISOString(),dept:valueDept,group:valueGroup,isChanged:false})
+        setProduct({ articleName: '', barCode: '', price: '', qte: '', time: '',isChanged:false })
+        console.log(products);
+        
     }
 
     const search = () => {

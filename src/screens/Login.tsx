@@ -1,28 +1,29 @@
 import { KeyboardAvoidingView, StyleSheet, TextInput, View } from 'react-native'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useLayoutEffect, useState } from 'react'
 import { Button, Text } from 'react-native-elements';
 import Loading from '../components/Loading';
 import { getData, setData } from '../functions/localStorage';
+import axios from 'axios';
 
 interface props {
     navigation: any;
 }
 const Login: FC<props> = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const onLogin = () => {
-        const { username } = user;
-        setData('auth', { token: 'mytoken', username: username });
+    const onLogin = async () => {
         setIsLoading(true)
-        setTimeout(() => {
-            user.username==='Youssef'&&user.password==='Youssef'?
-            navigation.replace('Home', { token: 'myToken', username: user.username })
-            :
-            (alert('invalid username or password'),setIsLoading(false))
-            
-        }, 2000);
+        await axios.post('https://balisage.herokuapp.com/api/auth',user).then((res)=>{
+            if(res.data.token){
+                setData('auth', { token: res.data.token, username: user.username })
+                navigation.replace('Home', { token: 'myToken', username: user.username })
+            }
+        }).catch(()=>{
+            setIsLoading(false)
+            alert('Invalid username or password')
+        })
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         getData('auth').then((res) => res.token && navigation.replace('Home', { username: res.username }))
     }, [])
 

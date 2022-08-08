@@ -3,6 +3,8 @@ export interface Idata{
     articleName:string;
     price:string|number;
     qte?:number|string;
-    time?:string;
-    isPrinted?:boolean|false;
+    time?:number|string;
+    isChanged?:boolean|false;
+    dept?:string|null;
+    group?:string|null;
 }
