@@ -1,8 +1,8 @@
 import { Idata } from "../interfaces/Idata"
 
 
-export const fData:Array<Idata> = [{barCode:111111111,articleName:"Rice - Sushi",price:"34.18"},
-{barCode:222222222,articleName:"Tart Shells - Sweet, 4",price:"40.15"},
+export const fData:Array<Idata> = [{barCode:111111111,articleName:"fanta",price:"7.50"},
+{barCode:222222222,articleName:"Mirondina",price:"0.99"},
 {barCode:213695740411,articleName:"Truffle Paste",price:"79.21"},
 {barCode:787018444274,articleName:"Blackberries",price:"89.40"},
 {barCode:289762681124,articleName:"Wine - German Riesling",price:"1.48"},
